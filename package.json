@@ -1,7 +1,7 @@
 {
   "name": "nestjs-google-module",
   "exports": {
-    ".": "./src/"
+    ".": "./src/*.ts"
   },
   "version": "0.0.1",
   "description": "NestJS Google Module for Google's API",
