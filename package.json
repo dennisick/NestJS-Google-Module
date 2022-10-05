@@ -5,6 +5,9 @@
   "author": "Dennis Ickes",
   "private": true,
   "license": "UNLICENSED",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.json",
