@@ -5,7 +5,7 @@
   "author": "Dennis Ickes",
   "private": true,
   "license": "UNLICENSED",
-  "exports": "./dist/",
+  "exports": "./dist/index.js",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
