@@ -1,13 +1,12 @@
 {
   "name": "nestjs-google-module",
+  "exports": "./dist/index.js",
+  "main": "./dist/index.js",
   "version": "0.0.1",
   "description": "NestJS Google Module for Google's API",
   "author": "Dennis Ickes",
   "private": true,
   "license": "UNLICENSED",
-  "exports": {
-    ".": "./dist/index.js"
-  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.json",
