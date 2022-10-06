@@ -18,7 +18,7 @@ const googleapis_1 = require("googleapis");
 let GoogleService = class GoogleService {
     constructor(options) {
         this.options = options;
-        this.oAuth2Client = new googleapis_1.google.auth.OAuth2(options.clientId, options.secret, options.redirectUri);
+        this.oAuth2Client = new googleapis_1.google.auth.OAuth2(this.options.clientId, this.options.secret, this.options.redirectUri);
     }
     generateAuthURL(accessType, scope) {
         const url = this.oAuth2Client.generateAuthUrl({
@@ -27,13 +27,20 @@ let GoogleService = class GoogleService {
         });
         return url;
     }
-    async getTokens(code) {
+    async setCredentials(code) {
         const { tokens } = await this.oAuth2Client.getToken(code);
+        this.oAuth2Client.setCredentials(tokens);
+        this.oAuth2User = googleapis_1.google.oauth2({
+            auth: this.oAuth2Client,
+            version: "v2"
+        });
         return tokens;
     }
-    async getProfile(token) {
-        const tokenInfo = await this.oAuth2Client.getTokenInfo(token);
-        return tokenInfo;
+    async getTokenInfo(token) {
+        return this.oAuth2Client.getTokenInfo(token);
+    }
+    async getUserInfo() {
+        return (await this.oAuth2User.userinfo.get()).data;
     }
 };
 GoogleService = __decorate([
