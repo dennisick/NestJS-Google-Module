@@ -31,6 +31,14 @@ let GoogleService = class GoogleService {
         const { tokens } = await this.oAuth2Client.getToken(code);
         return tokens;
     }
+    async getProfile(token) {
+        const oAuth2 = googleapis_1.google.oauth2({
+            auth: this.oAuth2Client,
+            version: 'v2'
+        });
+        const { data } = await oAuth2.userinfo.get();
+        return data;
+    }
 };
 GoogleService = __decorate([
     (0, common_1.Injectable)(),
