@@ -3,22 +3,24 @@ import { Credentials, OAuth2Client } from 'google-auth-library';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import { google, oauth2_v2 } from "googleapis";
 
-@Injectable()
+@Injectable({  })
 export class GoogleService {
 
-  private readonly oAuth2Client: OAuth2Client;
-  private oAuth2User: oauth2_v2.Oauth2;
+  @Inject('GOOGLE_OPTIONS') 
+  private readonly options: Record<string, any>
 
-  constructor(@Inject('GOOGLE_OPTIONS') private readonly options: Record<string, any>) {
-      this.oAuth2Client = new google.auth.OAuth2(
-        this.options.clientId,
-        this.options.secret,
-        this.options.redirectUri
-      );
-  }
-
-  public generateAuthURL(accessType: 'offline' | 'online', scope: string[]): string {
-    const url = this.oAuth2Client.generateAuthUrl({
+  /**
+   * This method generates a Google OAuth2 login URL for the user.
+   * After the user has successfully logged in, Google redirects the user
+   * to the redirect_uri and passes the "code" in the query of the GET request
+   * to get the JWT token "access_token" 
+   * 
+   * @param accessType type 'offline' gives a refresh_token to refesh the access_token and type 'online' gives only an access_token
+   * @param scope Hand over the features of the Google API to get access to it (e.g email & profile)
+   * @returns (string) The Google OAuth2 login URL for the user
+   */
+  public generateAuthURL(client: OAuth2Client, accessType: 'offline' | 'online', scope: string[]): string {
+    const url = client.generateAuthUrl({
       access_type: accessType,
       scope
     });
@@ -26,24 +28,34 @@ export class GoogleService {
     return url;
   }
 
-  public async setCredentials(code: string): Promise<Credentials> {
-    const { tokens }: GetTokenResponse = await this.oAuth2Client.getToken(code);
-    this.oAuth2Client.setCredentials(tokens);
-
-    this.oAuth2User = google.oauth2({
-      auth: this.oAuth2Client,
-      version: "v2"
-    });
+  public async setCredentials(client: OAuth2Client, code: string): Promise<Credentials> {
+    const { tokens }: GetTokenResponse = await client.getToken(code);
+    client.setCredentials(tokens);
 
     return tokens;
   }
 
-  public async getTokenInfo(token: string) {
-    return this.oAuth2Client.getTokenInfo(token);
+  public async getTokenInfo(authUser: oauth2_v2.Oauth2) {
+    return authUser.tokeninfo;
   }
 
-  public async getUserInfo() {
-    return (await this.oAuth2User.userinfo.get()).data;
+  public async getUserInfo(authUser: oauth2_v2.Oauth2) {
+    return (await authUser.userinfo.get()).data;
+  }
+
+  public getAuthClient(): OAuth2Client {
+    return new google.auth.OAuth2(
+      this.options.clientId,
+      this.options.secret,
+      this.options.redirectUri
+    );
+  }
+
+  public getAuthUser(client: OAuth2Client): oauth2_v2.Oauth2 {
+    return google.oauth2({
+      auth: client,
+      version: "v2"
+    });
   }
 
 }
