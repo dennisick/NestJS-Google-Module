@@ -4,5 +4,5 @@ export declare class GoogleService {
     constructor(options: Record<string, any>);
     generateAuthURL(accessType: 'offline' | 'online', scope: string[]): string;
     getTokens(code: string): Promise<any>;
-    getProfile(token: string): Promise<import("googleapis").oauth2_v2.Schema$Userinfo>;
+    getProfile(token: string): Promise<any>;
 }

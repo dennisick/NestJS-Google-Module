@@ -32,12 +32,8 @@ let GoogleService = class GoogleService {
         return tokens;
     }
     async getProfile(token) {
-        const oAuth2 = googleapis_1.google.oauth2({
-            auth: this.oAuth2Client,
-            version: 'v2'
-        });
-        const { data } = await oAuth2.userinfo.get();
-        return data;
+        const tokenInfo = await this.oAuth2Client.getTokenInfo(token);
+        return tokenInfo;
     }
 };
 GoogleService = __decorate([

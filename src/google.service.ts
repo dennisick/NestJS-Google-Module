@@ -29,13 +29,8 @@ export class GoogleService {
   }
 
   public async getProfile(token: string) {
-    const oAuth2 = google.oauth2({
-      auth: this.oAuth2Client,
-      version: 'v2'
-    });
-
-    const { data } = await oAuth2.userinfo.get();
-    return data;
+    const tokenInfo = await this.oAuth2Client.getTokenInfo(token);
+    return tokenInfo;
   }
 
 }
