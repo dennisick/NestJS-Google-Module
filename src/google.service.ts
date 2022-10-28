@@ -2,12 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import { google, oauth2_v2 } from "googleapis";
+import { GoogleModuleOptions } from './google.interfaces';
 
 @Injectable({  })
 export class GoogleService {
 
   @Inject('GOOGLE_OPTIONS') 
-  private readonly options: Record<string, any>
+  private readonly options: GoogleModuleOptions;
 
   /**
    * This method generates a Google OAuth2 login URL for the user.

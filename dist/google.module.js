@@ -13,6 +13,7 @@ const google_service_1 = require("./google.service");
 let GoogleModule = GoogleModule_1 = class GoogleModule {
     static register(options) {
         return {
+            global: options.isGlobal,
             module: GoogleModule_1,
             providers: [
                 {
@@ -22,6 +23,41 @@ let GoogleModule = GoogleModule_1 = class GoogleModule {
                 google_service_1.GoogleService
             ],
             exports: [google_service_1.GoogleService]
+        };
+    }
+    static registerAsync(options) {
+        return {
+            global: options.isGlobal,
+            module: GoogleModule_1,
+            imports: options.imports || [],
+            exports: [google_service_1.GoogleService],
+            providers: [...this.createAsyncProviders(options), google_service_1.GoogleService]
+        };
+    }
+    static createAsyncProviders(options) {
+        if (options.useExisting || options.useFactory) {
+            return [this.createAsyncOptionsProvider(options)];
+        }
+        return [
+            this.createAsyncOptionsProvider(options),
+            {
+                provide: options.useClass,
+                useClass: options.useClass
+            }
+        ];
+    }
+    static createAsyncOptionsProvider(options) {
+        if (options.useFactory) {
+            return {
+                provide: 'GOOGLE_OPTIONS',
+                useFactory: options.useFactory,
+                inject: options.inject || []
+            };
+        }
+        return {
+            provide: 'GOOGLE_OPTIONS',
+            useFactory: async (optionsFactory) => await optionsFactory.createGoogleOptions(),
+            inject: [options.useExisting || options.useClass]
         };
     }
 };
